@@ -8,7 +8,7 @@ export default function Home() {
         <Typography variant="h3">
           Let A.I. post your products while you run your business.
         </Typography>
-        <Link href="home">
+        <Link href="/dashboard?tab=settings">
           <Button
             variant="contained"
             sx={{
