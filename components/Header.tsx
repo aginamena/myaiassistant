@@ -1,4 +1,3 @@
-import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import MenuIcon from "@mui/icons-material/Menu";
 import {
   AppBar,
@@ -32,12 +31,6 @@ export default function Header({
         <Typography variant="h6" noWrap>
           My App
         </Typography>
-        <SignedOut>
-          <SignInButton />
-        </SignedOut>
-        <SignedIn>
-          <UserButton />
-        </SignedIn>
       </Toolbar>
     </AppBar>
   );

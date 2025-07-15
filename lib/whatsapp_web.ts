@@ -24,7 +24,6 @@ export async function initializeClient(clientId:string) {
 
   client.on("qr", (qr) => {
     qrData = qr;
-    console.log("QR Code received", qr);
   });
 
   client.on("ready", () => {
