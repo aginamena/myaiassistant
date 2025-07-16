@@ -10,33 +10,54 @@ export default function ScanQRData() {
     useState<boolean>(false);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      fetch("/api/client_data")
-        .then((res) => res.json())
-        .then((data) => {
-          setQrData(data.qrData);
-          if (data.clientIsAuthenticated) {
-            setClientIsAuthenticated(true);
-            clearInterval(interval);
-          }
-        });
-    }, 5000); // poll every 5 seconds
-
+    const fetchClientData = async () => {
+      try {
+        const res = await fetch("/api/client_data");
+        const data = await res.json();
+        console.log(data);
+        setQrData(data.qrData);
+        // Check if the client is authenticated
+        if (data.clientIsAuthenticated) {
+          setClientIsAuthenticated(true);
+          // If authenticated, clear the interval
+          clearInterval(interval);
+          // Update the database
+          fetch("/api/update_database", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ connectedToWhatsapp: true }),
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching client data:", error);
+      }
+    };
+    // Fetch data immediately
+    fetchClientData();
+    // Set the interval to poll every 5 seconds
+    const interval = setInterval(fetchClientData, 5000);
+    // Cleanup interval when the component is unmounted or client is authenticated
     return () => clearInterval(interval);
   }, []);
+
   return (
     <div>
-      <h1>Connect AI to your WhatsApp</h1>
-      <p>
+      <Typography variant="h4" style={{ fontWeight: "bold" }}>
+        Step1: Connect AI to your WhatsApp
+      </Typography>
+
+      <Typography variant="h6" sx={{ mb: 3 }}>
         Open WhatsApp on your phone, go to the settings, and scan the QR code.
-      </p>
+      </Typography>
 
       {clientIsAuthenticated ? (
         <>
           <Typography>
             AI has been successfully connected to your WhatsApp account.
           </Typography>
-          <Link href="/dashboard?tab=automate-post">
+          <Link href="/dashboard?tab=create post">
             <Button
               variant="contained"
               sx={{
@@ -54,12 +75,12 @@ export default function ScanQRData() {
                 },
               }}
             >
-              Start automating your posts now.
+              Start creating your posts now.
             </Button>
           </Link>
         </>
       ) : qrData ? (
-        <QRCode value={qrData} size={256} />
+        <QRCode value={qrData} size={300} />
       ) : (
         <p>Loading QR code...</p>
       )}

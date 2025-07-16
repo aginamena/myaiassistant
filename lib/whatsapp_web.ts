@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import { Client, RemoteAuth } from "whatsapp-web.js";
 import { MongoStore } from "wwebjs-mongo";
 
+
 let client: Client;
 let qrData = "";
 let clientIsAuthenticated = false;
@@ -17,7 +18,7 @@ export async function initializeClient(clientId:string) {
   client = new Client({
     authStrategy: new RemoteAuth({
       store,
-      backupSyncIntervalMs: 300000, // syncs every 5 minutes
+      backupSyncIntervalMs:604800000, //updates every 1 week
       clientId:clientId,
     }),
   });
@@ -26,18 +27,8 @@ export async function initializeClient(clientId:string) {
     qrData = qr;
   });
 
-  client.on("ready", () => {
-    console.log("WhatsApp client is ready");
-  });
-    client.on("authenticated", () => {
-    console.log("Client is authenticated");
+  client.on("authenticated", async () => {
     clientIsAuthenticated = true;
-  });
-
-  client.on("message", async (message) => {
-    if (message.from === "16134628836@c.us") {
-      await client.sendMessage(message.from, "Hello Divine!");
-    }
   });
 
   client.initialize();

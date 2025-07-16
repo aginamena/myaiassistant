@@ -9,7 +9,7 @@ export default function DrawerCmp({
   mobileOpen: boolean;
   handleDrawerToggle: () => void;
 }) {
-  const tabLabels = useMemo(() => ["automate post", "Profile", "Settings"], []);
+  const tabLabels = useMemo(() => ["create post", "Profile", "Settings"], []);
   const [tabIndex, setTabIndex] = useState(0);
   const router = useRouter();
   const searchParams = useSearchParams();

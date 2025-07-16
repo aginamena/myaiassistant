@@ -13,7 +13,7 @@ export default async function ResponsiveDrawerTabs({
   const { tab } = await searchParams;
   const tabs = new Map();
   tabs.set("settings", <ScanQRData />);
-  tabs.set("automate-post", <Typography>autoamte post</Typography>);
+  tabs.set("create post", <Typography>create post</Typography>);
   tabs.set("profile", <Typography>Profile Content</Typography>);
 
   return (

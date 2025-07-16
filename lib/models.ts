@@ -6,7 +6,8 @@ const userSchema = new Schema({
     email:String,
     id:String,
     name:String,
-    image:String
+    image:String,
+    connectedToWhatsapp:Boolean
 })
 
 const Users = mongoose.models.Users || mongoose.model('Users', userSchema);
