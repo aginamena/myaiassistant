@@ -1,55 +1,122 @@
 "use client";
 import { Button, Typography } from "@mui/material";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import QRCode from "react-qr-code";
 
 export default function ScanQRData() {
   const [qrData, setQrData] = useState<string>("");
-  const [clientIsAuthenticated, setClientIsAuthenticated] =
-    useState<boolean>(false);
+  const [clientIsAuthenticated, setClientIsAuthenticated] = useState(false);
+  const [qrExpired, setQrExpired] = useState(false);
+  const [refreshClient, setRefreshClient] = useState(false);
+  const { data } = useSession();
+
+  const wwebjs_server =
+    process.env.NODE_ENV === "development"
+      ? process.env.NEXT_PUBLIC_WWEBJS_LOCAL_SERVER_URL
+      : process.env.NEXT_PUBLIC_WWEBJS_LIVE_SERVER_URL;
+
+  const clientId = "50823";
 
   useEffect(() => {
-    const fetchClientData = async () => {
+    let interval: NodeJS.Timeout;
+    let timeout: NodeJS.Timeout;
+
+    async function isClientAuthenticated() {
       try {
-        const res = await fetch("/api/client_data");
-        const data = await res.json();
-        console.log(data);
-        setQrData(data.qrData);
-        // Check if the client is authenticated
-        if (data.clientIsAuthenticated) {
+        const response = await fetch("/api/database");
+        const { profile } = await response.json();
+
+        if (profile?.connectedToWhatsapp) {
           setClientIsAuthenticated(true);
-          // If authenticated, clear the interval
-          clearInterval(interval);
-          // Update the database
-          fetch("/api/update_database", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ connectedToWhatsapp: true }),
-          });
+          return true;
         }
       } catch (error) {
-        console.error("Error fetching client data:", error);
+        console.error("Failed to check client authentication:", error);
       }
+
+      return false;
+    }
+
+    async function startPollingForClientReady() {
+      async function checkStatus() {
+        try {
+          const response = await fetch(
+            `${wwebjs_server}/is_client_created/${clientId}`
+          );
+          const { status } = await response.json();
+
+          if (status === "client_created") {
+            clearInterval(interval);
+            clearTimeout(timeout);
+            setClientIsAuthenticated(true);
+
+            // Update DB in background
+            fetch("/api/database", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                filter: { email: data?.user?.email ?? "" },
+                document: { connectedToWhatsapp: true },
+                collection: "Users",
+              }),
+            });
+          }
+        } catch (error) {
+          console.error("Error polling client status:", error);
+        }
+      }
+
+      // Start polling every 5 seconds
+      interval = setInterval(checkStatus, 5000);
+      checkStatus(); // immediate first call
+
+      // Stop polling after 90 seconds (QR expired)
+      timeout = setTimeout(() => {
+        clearInterval(interval);
+        console.warn("Polling stopped: QR expired.");
+        setQrExpired(true); // 👈 mark QR as expired in UI
+      }, 90000);
+    }
+
+    async function init() {
+      const isAuthenticated = await isClientAuthenticated();
+
+      if (!isAuthenticated) {
+        try {
+          const response = await fetch(
+            `${wwebjs_server}/create_client/${clientId}`
+          );
+          const { status } = await response.json();
+          setQrData(status);
+          setQrExpired(false); // 👈 reset QR expired state if retrying
+
+          startPollingForClientReady();
+        } catch (error) {
+          console.error("Error creating client:", error);
+        }
+      }
+    }
+
+    init();
+
+    return () => {
+      clearInterval(interval);
+      clearTimeout(timeout);
     };
-    // Fetch data immediately
-    fetchClientData();
-    // Set the interval to poll every 5 seconds
-    const interval = setInterval(fetchClientData, 5000);
-    // Cleanup interval when the component is unmounted or client is authenticated
-    return () => clearInterval(interval);
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refreshClient]);
 
   return (
     <div>
       <Typography variant="h4" style={{ fontWeight: "bold" }}>
-        Step1: Connect AI to your WhatsApp
+        Step 1: Connect AI to your WhatsApp
       </Typography>
 
       <Typography variant="h6" sx={{ mb: 3 }}>
         Open WhatsApp on your phone, go to the settings, and scan the QR code.
+        You have 70 seconds before the qrcode becomes invalid
       </Typography>
 
       {clientIsAuthenticated ? (
@@ -78,6 +145,15 @@ export default function ScanQRData() {
               Start creating your posts now.
             </Button>
           </Link>
+        </>
+      ) : qrExpired ? (
+        <>
+          <Typography>
+            QRCode has expired you have to refresh to start again
+          </Typography>
+          <Button onClick={() => setRefreshClient(!refreshClient)}>
+            Refresh
+          </Button>
         </>
       ) : qrData ? (
         <QRCode value={qrData} size={300} />

@@ -19,7 +19,7 @@ export default function Home() {
           variant="contained"
           onClick={
             status == "authenticated"
-              ? () => router.push("dashboard?tab=settings")
+              ? () => router.push("dashboard?tab=connect to whatsapp")
               : () => signIn("google")
           }
           sx={{

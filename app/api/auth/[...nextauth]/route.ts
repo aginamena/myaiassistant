@@ -1,4 +1,4 @@
-import Users from "@/lib/models"
+import { Users } from "@/lib/models"
 import mongoose from "mongoose"
 import NextAuth from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
@@ -12,13 +12,13 @@ const handler = NextAuth({
   ],
   callbacks: {
     async signIn({user}) {
-    await mongoose.connect(process.env.MONGODB_URI as string);
+      await mongoose.connect(process.env.MONGODB_URI as string);
       const profile = await Users.findOne({email:user.email})
       if(!profile){
         Users.insertOne(user)
       }
       return true;
-    }
+    },
   },
   secret:process.env.NEXTAUTH_SECRET
 })

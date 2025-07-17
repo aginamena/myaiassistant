@@ -10,5 +10,16 @@ const userSchema = new Schema({
     connectedToWhatsapp:Boolean
 })
 
+const postSchema = new Schema({
+    id:String,
+    creatorsEmail:String,
+    description:String
+})
+
 const Users = mongoose.models.Users || mongoose.model('Users', userSchema);
-export default Users;
+const Posts = mongoose.models.Posts || mongoose.model('Posts', postSchema);
+
+export {
+    Users,
+    Posts
+}

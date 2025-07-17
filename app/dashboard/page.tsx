@@ -1,4 +1,6 @@
-import { Box, Toolbar, Typography } from "@mui/material";
+import { Box, Toolbar } from "@mui/material";
+import AutomatePost from "./AutomatePost";
+import CreatePost from "./CreatePost";
 import PageStructure from "./PageStructure";
 import ScanQRData from "./ScanQRData";
 
@@ -12,9 +14,9 @@ export default async function ResponsiveDrawerTabs({
   const drawerWidth = 240;
   const { tab } = await searchParams;
   const tabs = new Map();
-  tabs.set("settings", <ScanQRData />);
-  tabs.set("create post", <Typography>create post</Typography>);
-  tabs.set("profile", <Typography>Profile Content</Typography>);
+  tabs.set("connect to whatsapp", <ScanQRData />);
+  tabs.set("create post", <CreatePost />);
+  tabs.set("automate post", <AutomatePost />);
 
   return (
     <Box sx={{ display: "flex" }}>

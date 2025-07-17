@@ -9,7 +9,10 @@ export default function DrawerCmp({
   mobileOpen: boolean;
   handleDrawerToggle: () => void;
 }) {
-  const tabLabels = useMemo(() => ["create post", "Profile", "Settings"], []);
+  const tabLabels = useMemo(
+    () => ["create post", "automate post", "connect to whatsapp"],
+    []
+  );
   const [tabIndex, setTabIndex] = useState(0);
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -27,7 +30,7 @@ export default function DrawerCmp({
     console.log(event);
     setTabIndex(newValue);
     const selectedTab = tabLabels[newValue].toLowerCase();
-    router.push(`/dashboard?tab=${selectedTab.replaceAll(" ", "-")}`);
+    router.push(`/dashboard?tab=${selectedTab}`);
   };
 
   const drawer = (
