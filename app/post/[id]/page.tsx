@@ -4,7 +4,11 @@ import mongoose from "mongoose";
 import { getServerSession } from "next-auth";
 import Contacts from "../Contacts";
 
-export default async function Post({ params }: { params: { id: string } }) {
+export default async function Post({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const session = await getServerSession();
   const { id } = await params;
 
