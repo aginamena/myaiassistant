@@ -1,8 +1,8 @@
 import { Box, Toolbar } from "@mui/material";
 import AutomatePost from "./AutomatePost";
+import ConnectToWhatsapp from "./ConnectToWhatsapp";
 import CreatePost from "./CreatePost";
 import PageStructure from "./PageStructure";
-import ScanQRData from "./ScanQRData";
 
 export default async function ResponsiveDrawerTabs({
   searchParams,
@@ -14,7 +14,7 @@ export default async function ResponsiveDrawerTabs({
   const drawerWidth = 240;
   const { tab } = await searchParams;
   const tabs = new Map();
-  tabs.set("connect to whatsapp", <ScanQRData />);
+  tabs.set("connect to whatsapp", <ConnectToWhatsapp />);
   tabs.set("create post", <CreatePost />);
   tabs.set("automate post", <AutomatePost />);
 

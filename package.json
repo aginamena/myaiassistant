@@ -18,8 +18,10 @@
     "mongoose": "^8.16.3",
     "next": "^15.4.1",
     "next-auth": "^4.24.11",
+    "next-cloudinary": "^6.16.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-image-gallery": "^1.4.0",
     "react-qr-code": "^2.0.18",
     "whatsapp-web.js": "^1.31.0",
     "wwebjs-mongo": "^1.1.0"
@@ -29,6 +31,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/react-image-gallery": "^1.2.4",
     "eslint": "^9",
     "eslint-config-next": "15.3.5",
     "typescript": "^5"

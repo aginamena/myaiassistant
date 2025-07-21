@@ -13,10 +13,7 @@ const handler = NextAuth({
   callbacks: {
     async signIn({user}) {
       await mongoose.connect(process.env.MONGODB_URI as string);
-      const profile = await Users.findOne({email:user.email})
-      if(!profile){
-        Users.insertOne(user)
-      }
+      await Users.updateOne({email:user.email}, {$set :user}, {upsert:true})
       return true;
     },
   },

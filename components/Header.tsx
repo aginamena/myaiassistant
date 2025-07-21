@@ -29,7 +29,7 @@ export default function Header({
           </IconButton>
         )}
         <Typography variant="h6" noWrap>
-          My App
+          myAIassistant
         </Typography>
       </Toolbar>
     </AppBar>
