@@ -15,12 +15,14 @@ export default function GroupContacts({
   clientGroupChats,
   postId,
   disableSaveBtn,
+  clientId,
 }: {
-  clientGroupChats: GroupChat[];
+  clientGroupChats: string;
   postId: string;
   disableSaveBtn: boolean;
+  clientId: string;
 }) {
-  const [groupChats, setGroupChats] = useState(clientGroupChats);
+  const [groupChats, setGroupChats] = useState([]);
   const [reconnectToWhatsapp, setReconnectToWhatsapp] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
@@ -28,7 +30,6 @@ export default function GroupContacts({
   const selectedGroups = useRef<GroupChat[]>([]);
 
   const router = useRouter();
-  const sessionId = "1752861080210";
 
   const wwebjs_server =
     process.env.NODE_ENV === "development"
@@ -36,28 +37,38 @@ export default function GroupContacts({
       : process.env.NEXT_PUBLIC_WWEBJS_LIVE_SERVER_URL;
 
   async function saveSelectedGroupsToPost() {
-    const body = {
-      filter: { id: postId },
-      document: {
-        groupChats: selectedGroups.current,
-        clientId: sessionId,
-        id: postId,
-      },
-    };
-    await Promise.all([
-      fetch(`/api/selected_groups`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      }),
-      fetch(`${wwebjs_server}/schedule`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      }),
-    ]);
-    alert("Groups successfully saved");
-    location.reload();
+    if (selectedGroups.current.length == 0) {
+      alert(
+        "You have to select to the groups you want this post to be sent to"
+      );
+      return;
+    }
+    try {
+      const body = {
+        filter: { id: postId },
+        document: {
+          groupChats: selectedGroups.current,
+          clientId,
+          id: postId,
+        },
+      };
+      await Promise.all([
+        fetch(`/api/selected_groups`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        }),
+        fetch(`${wwebjs_server}/schedule`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        }),
+      ]);
+      alert("Groups successfully saved");
+      location.reload();
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   function handleCheckedGroup(groupInfo: GroupChat, isChecked: boolean) {
@@ -75,7 +86,7 @@ export default function GroupContacts({
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        filter: { clientId: sessionId },
+        filter: { clientId },
         document: { connectedGroupChatIds: chats },
       }),
     });
@@ -84,28 +95,34 @@ export default function GroupContacts({
   useEffect(() => {
     async function fetchContacts() {
       setLoading(true);
-      if (clientGroupChats.length == 0) {
-        const response = await fetch(
-          `${wwebjs_server}/all_whatsapp_groups_client_is_part_of/${sessionId}`
-        );
-        const result = await response.json();
-        if (result.status) {
-          setReconnectToWhatsapp(true);
-          fetch("/api/users", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              filter: { clientId: sessionId },
-              document: { connectedToWhatsapp: false },
-            }),
-          });
-        } else if (result.error) {
-          setError(true);
-          setLoading(false);
+      try {
+        if (!clientGroupChats) {
+          const response = await fetch(
+            `${wwebjs_server}/all_whatsapp_groups_client_is_part_of/${clientId}`
+          );
+          const result = await response.json();
+          if (result.status) {
+            setReconnectToWhatsapp(true);
+            fetch("/api/users", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                filter: { id: clientId },
+                document: { connectedToWhatsapp: false },
+              }),
+            });
+          } else if (result.error) {
+            setError(true);
+          } else {
+            setGroupChats(result.groupChats);
+            saveGroupChat(result.groupChats);
+          }
         } else {
-          setGroupChats(result.groupChats);
-          saveGroupChat(result.groupChats);
+          setGroupChats(JSON.parse(clientGroupChats));
         }
+      } catch (error) {
+        setError(true);
+        console.error(error);
       }
       setLoading(false);
     }
@@ -144,11 +161,7 @@ export default function GroupContacts({
             Could not connect to your whatsapp. You have to authenticate again
           </Typography>
           <Button
-            onClick={() =>
-              router.push(
-                `../dashboard?tab=connect to whatsapp&sessionId=${sessionId}`
-              )
-            }
+            onClick={() => router.push(`../dashboard?tab=connect to whatsapp`)}
           >
             Reconnect to Whatsap
           </Button>
@@ -164,7 +177,7 @@ export default function GroupContacts({
               justifyContent: "center",
             }}
           >
-            {groupChats.map((groupChat) => (
+            {groupChats.map((groupChat: GroupChat) => (
               <Box
                 sx={{
                   maxWidth: 345,

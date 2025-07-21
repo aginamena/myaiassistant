@@ -3,19 +3,19 @@ import { Button, CircularProgress, Typography } from "@mui/material";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
-// import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function ConnectToWhatsapp() {
   const { data } = useSession();
-  // const searchParms = useSearchParams();
 
-  // const previousSessionId = searchParms.get("sessionId") || "1752861080210";
+  const previousSessionId = localStorage.getItem("sessionId");
 
   const [qrImg, setQrImg] = useState<string>("");
   const [clientIsAuthenticated, setClientIsAuthenticated] = useState(false);
   const [qrExpired, setQrExpired] = useState(false);
-  const [sessionId, setSessionId] = useState(Date.now().toString());
+  const [sessionId, setSessionId] = useState(
+    previousSessionId || Date.now().toString()
+  );
   const [sessionStatus, setSessionStatus] = useState("");
   const [loading, setLoading] = useState(true);
 
@@ -56,7 +56,7 @@ export default function ConnectToWhatsapp() {
             clearInterval(interval);
             clearTimeout(timeout);
             setClientIsAuthenticated(true);
-
+            localStorage.setItem("sessionId", sessionId);
             // Update DB in background
             fetch("/api/users", {
               method: "POST",
@@ -136,7 +136,7 @@ export default function ConnectToWhatsapp() {
   return (
     <div>
       <Typography variant="h4" style={{ fontWeight: "bold" }}>
-        Step 1: Connect AI to your WhatsApp
+        Step 1: Connect to your WhatsApp
       </Typography>
 
       <Typography variant="h6" sx={{ mb: 3 }}>
@@ -151,7 +151,7 @@ export default function ConnectToWhatsapp() {
       {clientIsAuthenticated ? (
         <>
           <Typography>
-            AI has been successfully connected to your WhatsApp account.
+            You have successfully connected your Whatsapp account.
           </Typography>
           <Link href="/dashboard?tab=create post">
             <Button
@@ -186,7 +186,7 @@ export default function ConnectToWhatsapp() {
             sx={{ mt: 5 }}
             onClick={() => {
               setLoading(true);
-              setSessionId(Date.now().toString());
+              setSessionId(previousSessionId || Date.now().toString());
             }}
           >
             Refresh
