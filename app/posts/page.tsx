@@ -1,31 +1,35 @@
-import { Posts, Users } from "@/lib/models";
+import { Posts } from "@/lib/models";
 import {
   Box,
   Card,
   CardActionArea,
   CardContent,
   CardMedia,
+  Container,
   Typography,
 } from "@mui/material";
+import mongoose from "mongoose";
 import { getServerSession } from "next-auth";
 import Link from "next/link";
 
-export default async function AutomatePost() {
+export default async function AllPosts() {
   const session = await getServerSession();
   let posts = [];
   if (session?.user) {
-    const profile = await Users.findOne({ email: session.user.email });
     //sorts the posts in a way to show the last added first
-    posts = await Posts.find({ clientId: profile.id }).sort({ _id: -1 });
+    await mongoose.connect(process.env.MONGODB_URI as string);
+    posts = await Posts.find({ email: session.user.email }).sort({ _id: -1 });
   }
   return (
-    <Box>
-      <Typography
-        variant="h4"
-        style={{ fontWeight: "bold", marginBottom: "20px" }}
-      >
-        Step 3: Click on post to set automation
+    <Container sx={{ mt: 4, mb: 4 }}>
+      <Typography variant="h4" fontWeight="bold" sx={{ mb: 4 }}>
+        All Posts
       </Typography>
+      <Typography variant="body1" sx={{ mb: 2 }} color="text.secondary">
+        Here are all the posts you have created. Click on a post to view its
+        details.
+      </Typography>
+
       <Box style={{ display: "flex", flexWrap: "wrap", gap: "20px" }}>
         {posts.length == 0 ? (
           <Typography>
@@ -35,7 +39,7 @@ export default async function AutomatePost() {
           posts.map((post) => (
             <Link
               key={post.id}
-              href={`post/${post.id}`}
+              href={`posts/${post.id}`}
               style={{ textDecoration: "none" }}
             >
               <Card sx={{ maxWidth: 345 }}>
@@ -62,6 +66,6 @@ export default async function AutomatePost() {
           ))
         )}
       </Box>
-    </Box>
+    </Container>
   );
 }

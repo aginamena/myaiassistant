@@ -15,6 +15,8 @@
     "@mui/icons-material": "^7.2.0",
     "@mui/material": "^7.2.0",
     "@mui/material-nextjs": "^7.2.0",
+    "@mui/x-date-pickers": "^8.9.0",
+    "dayjs": "^1.11.13",
     "mongoose": "^8.16.3",
     "next": "^15.4.1",
     "next-auth": "^4.24.11",
@@ -22,9 +24,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-image-gallery": "^1.4.0",
-    "react-qr-code": "^2.0.18",
-    "whatsapp-web.js": "^1.31.0",
-    "wwebjs-mongo": "^1.1.0"
+    "react-qr-code": "^2.0.18"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
