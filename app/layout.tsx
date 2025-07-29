@@ -17,7 +17,22 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
-      <body>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+ window._mfq = window._mfq || [];
+  (function() {
+    var mf = document.createElement("script");
+    mf.type = "text/javascript"; mf.defer = true;
+    mf.src = "//cdn.mouseflow.com/projects/647136f3-4340-4541-a9a7-ad0662806f06.js";
+    document.getElementsByTagName("head")[0].appendChild(mf);
+  })();
+            `,
+          }}
+        />
+      </head>
+      <body suppressHydrationWarning>
         <NextAuthSession session={session}>
           <ThemeRegistry>{children}</ThemeRegistry>
         </NextAuthSession>
