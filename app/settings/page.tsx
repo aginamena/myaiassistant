@@ -34,7 +34,7 @@ const steps = [
 export default async function Settngs({
   searchParams,
 }: {
-  searchParams: { step: string };
+  searchParams: Promise<{ step: string }>;
 }) {
   const { step } = await searchParams;
 
