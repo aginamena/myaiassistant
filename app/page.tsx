@@ -22,7 +22,7 @@ export default function Home() {
     {
       title: "Connect Your WhatsApp Account",
       description:
-        "Link your WhatsApp account to the app securely in just a few seconds.",
+        "Link your WhatsApp account to the app securely in just a few seconds. You will need a second device to scan the QR code generated.",
     },
     {
       title: "Select Your Groups",
