@@ -21,7 +21,7 @@ export default function SchedulePostingTimes() {
 
   const wwebjs_server =
     process.env.NODE_ENV === "development"
-      ? process.env.NEXT_PUBLIC_WWEBJS_LOCAL_SERVER_URL
+      ? "http://localhost:5000"
       : process.env.NEXT_PUBLIC_WWEBJS_LIVE_SERVER_URL;
 
   async function SchedulePostingTimes() {
