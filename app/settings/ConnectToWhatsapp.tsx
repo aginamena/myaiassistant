@@ -38,7 +38,7 @@ export default function ConnectToWhatsapp() {
         timeout.current = setTimeout(() => {
           clearInterval(interval.current as NodeJS.Timeout);
           setQrExpired(true); // mark QR as expired in UI
-        }, 90000); // 90 seconds timeout
+        }, 120000); // 90 seconds timeout
       } else if (res.error) {
         console.error(res.error);
       }
