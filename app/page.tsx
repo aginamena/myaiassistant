@@ -91,7 +91,7 @@ export default function Home() {
         variant="contained"
         onClick={
           status == "authenticated"
-            ? () => router.push("settings?step=0")
+            ? () => router.push("settings?step=1")
             : () => signIn("google")
         }
         sx={{

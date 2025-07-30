@@ -95,7 +95,7 @@ export default function CreatePost() {
         </Typography>
         <Button
           variant="contained"
-          onClick={() => router.push("settings?step=3")}
+          onClick={() => router.push("settings?step=4")}
           sx={{
             backgroundColor: "#0018FF",
             color: "#fff",

@@ -115,7 +115,8 @@ export default function SelectedGroups() {
           Fetching your WhatsApp groups...
         </Typography>
         <Typography variant="body2" sx={{ mb: 3 }} color="text.secondary">
-          Please hold on while we load your groups.
+          Please hold on while we load your groups. This may take up to 7
+          minutes.
         </Typography>
         <CircularProgress />
       </>
@@ -133,7 +134,7 @@ export default function SelectedGroups() {
         </Typography>
         <Button
           variant="contained"
-          onClick={() => router.push("settings?step=2")}
+          onClick={() => router.push("settings?step=3")}
           sx={{
             backgroundColor: "#0018FF",
             color: "#fff",

@@ -38,7 +38,7 @@ export default function ConnectToWhatsapp() {
         timeout.current = setTimeout(() => {
           clearInterval(interval.current as NodeJS.Timeout);
           setQrExpired(true); // mark QR as expired in UI
-        }, 60000); // 40 seconds timeout
+        }, 60000); // 60 seconds timeout
       } else if (res.error) {
         console.error(res.error);
       }
@@ -109,7 +109,7 @@ export default function ConnectToWhatsapp() {
     return (
       <>
         <Typography sx={{ mb: 3 }}>
-          Setting things up... Please wait a moment
+          Generating QR code. This may take up to 7 minutes... Please wait
         </Typography>
         <CircularProgress />
       </>
@@ -150,7 +150,7 @@ export default function ConnectToWhatsapp() {
           <br />
           ⚠️ This QR code is valid for only <strong>60 seconds</strong>.
         </Typography>
-        <QRCode value={qrImg} size={350} />
+        <QRCode value={qrImg} />
       </>
     );
   }
@@ -167,7 +167,7 @@ export default function ConnectToWhatsapp() {
           </Typography>
           <Button
             variant="contained"
-            onClick={() => router.push("settings?step=1")}
+            onClick={() => router.push("settings?step=2")}
             sx={{
               backgroundColor: "#0018FF",
               color: "#fff",

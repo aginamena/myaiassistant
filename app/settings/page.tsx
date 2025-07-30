@@ -44,7 +44,7 @@ export default async function Settngs({
         Settings
       </Typography>
 
-      <Stepper activeStep={parseInt(step)} orientation="vertical">
+      <Stepper activeStep={parseInt(step) - 1} orientation="vertical">
         {steps.map((step, index) => (
           <Step key={step.label}>
             <StepLabel
