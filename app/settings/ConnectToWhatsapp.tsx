@@ -38,7 +38,7 @@ export default function ConnectToWhatsapp() {
         timeout.current = setTimeout(() => {
           clearInterval(interval.current as NodeJS.Timeout);
           setQrExpired(true); // mark QR as expired in UI
-        }, 60000); // 60 seconds timeout
+        }, 90000); // 90 seconds timeout
       } else if (res.error) {
         console.error(res.error);
       }
@@ -148,7 +148,7 @@ export default function ConnectToWhatsapp() {
           <strong>Linked Devices</strong> → <strong>Link a Device</strong>
           <br />
           <br />
-          ⚠️ This QR code is valid for only <strong>60 seconds</strong>.
+          ⚠️ This QR code is valid for only <strong>90 seconds</strong>.
         </Typography>
         <QRCode value={qrImg} />
       </>
